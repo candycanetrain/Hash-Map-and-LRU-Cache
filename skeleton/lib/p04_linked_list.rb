@@ -43,12 +43,10 @@ class LinkedList
   end
 
   def get(key)
-    current_link = @sentinel
-    match_link = nil
-    until current_link.key == key || current_link.next == @sentinel
-      current_link = current_link.next
+    self.each do |link|
+      return link.val if link.key == key
     end
-    current_link.key == key ? current_link.val : nil
+    nil
   end
 
   def include?(key)
@@ -72,18 +70,11 @@ class LinkedList
       new_link.next = @sentinel
       @sentinel.prev = new_link
     end
-    self.each do |link|
-      p link.key
-    end
   end
 
   def update(key, val)
-    current_link = @sentinel
-    until current_link.key == key || current_link.next == @sentinel
-      current_link = current_link.next
-    end
-    if current_link.key == key
-      current_link.val = val
+    self.each do |link|
+      link.val = val if link.key == key
     end
   end
 
@@ -92,12 +83,9 @@ class LinkedList
     self.each do |link|
       link_to_remove = link if link.key == key
     end
-    #sever previous
+
     link_to_remove.prev.next = link_to_remove.next
-    #sever next
     link_to_remove.next.prev = link_to_remove.prev
-    #connect previous and next.
-    #delete self
   end
 
   def each(&blk)
