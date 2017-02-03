@@ -19,7 +19,10 @@ class Link
 end
 
 class LinkedList
+  include Enumerable
   def initialize
+    @sentinel = Link.new
+    @sentinel.next, @sentinel.prev = @sentinel, @sentinel
   end
 
   def [](i)
@@ -28,30 +31,81 @@ class LinkedList
   end
 
   def first
+    @sentinel.next
   end
 
   def last
+    @sentinel.prev
   end
 
   def empty?
+    @sentinel.next == @sentinel
   end
 
   def get(key)
+    current_link = @sentinel
+    match_link = nil
+    until current_link.key == key || current_link.next == @sentinel
+      current_link = current_link.next
+    end
+    current_link.key == key ? current_link.val : nil
   end
 
   def include?(key)
+    self.each do |link|
+      return true if link.key == key
+    end
+    false
   end
 
   def append(key, val)
+    new_link = Link.new(key, val)
+
+    if self.empty?
+      @sentinel.next = new_link
+      @sentinel.prev = new_link
+      new_link.prev = @sentinel
+      new_link.next = @sentinel
+    else
+      last.next = new_link
+      new_link.prev = last
+      new_link.next = @sentinel
+      @sentinel.prev = new_link
+    end
+    self.each do |link|
+      p link.key
+    end
   end
 
   def update(key, val)
+    current_link = @sentinel
+    until current_link.key == key || current_link.next == @sentinel
+      current_link = current_link.next
+    end
+    if current_link.key == key
+      current_link.val = val
+    end
   end
 
   def remove(key)
+    link_to_remove = nil
+    self.each do |link|
+      link_to_remove = link if link.key == key
+    end
+    #sever previous
+    link_to_remove.prev.next = link_to_remove.next
+    #sever next
+    link_to_remove.next.prev = link_to_remove.prev
+    #connect previous and next.
+    #delete self
   end
 
-  def each
+  def each(&blk)
+    current_link = @sentinel.next
+    until current_link == @sentinel
+      blk.call(current_link)
+      current_link = current_link.next
+    end
   end
 
   # uncomment when you have `each` working and `Enumerable` included
