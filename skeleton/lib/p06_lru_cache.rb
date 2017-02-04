@@ -15,6 +15,8 @@ class LRUCache
   end
 
   def get(key)
+    list_id = @map.get(key)
+    @prc.call(list_id)
   end
 
   def to_s
